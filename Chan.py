@@ -18,6 +18,7 @@ class CChan:
     def __init__(
         self,
         code,
+        # 开始时间
         begin_time=None,
         end_time=None,
         data_src: Union[DATA_SRC, str] = DATA_SRC.BAO_STOCK,

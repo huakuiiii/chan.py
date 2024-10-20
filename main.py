@@ -53,7 +53,7 @@ if __name__ == "__main__":
             # "disp_end": True,
         },
         "figure": {
-            "x_range": 200,
+            "x_range": 1000,
         },
         "marker": {
             # "markers": {  # text, position, color
@@ -85,3 +85,4 @@ if __name__ == "__main__":
             plot_config=plot_config,
             plot_para=plot_para,
         )
+    input()
