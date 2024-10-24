@@ -116,13 +116,16 @@ class CBS_Point_meta:
 
 class CChanPlotMeta:
     def __init__(self, kl_list: CKLine_List):
+        # K线数据
         self.data = kl_list
 
         self.klc_list: List[Cklc_meta] = [Cklc_meta(klc) for klc in kl_list.lst]
+        # 日期数组
         self.datetick = [klu.time.to_str() for klu in self.klu_iter()]
         self.klu_len = sum(len(klc.klu_list) for klc in self.klc_list)
-
+        # 笔数组
         self.bi_list = [CBi_meta(bi) for bi in kl_list.bi_list]
+        # 线段数组
         self.seg_list: List[CSeg_meta] = []
         self.eigenfx_lst: List[CEigenFX_meta] = []
         for seg in kl_list.seg_list:
@@ -131,10 +134,13 @@ class CChanPlotMeta:
                 self.eigenfx_lst.append(CEigenFX_meta(seg.eigen_fx))
 
         self.segseg_list: List[CSeg_meta] = [CSeg_meta(segseg) for segseg in kl_list.segseg_list]
+        # 笔中枢数组
         self.zs_lst: List[CZS_meta] = [CZS_meta(zs) for zs in kl_list.zs_list]
+        # 线段中枢数组
         self.segzs_lst: List[CZS_meta] = [CZS_meta(segzs) for segzs in kl_list.segzs_list]
-
+        # 笔买卖点数组
         self.bs_point_lst: List[CBS_Point_meta] = [CBS_Point_meta(bs_point, is_seg=False) for bs_point in kl_list.bs_point_lst]
+        # 线段买卖点数组
         self.seg_bsp_lst: List[CBS_Point_meta] = [CBS_Point_meta(seg_bsp, is_seg=True) for seg_bsp in kl_list.seg_bs_point_lst]
 
     def klu_iter(self):
