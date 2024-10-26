@@ -1,5 +1,5 @@
 import os
-
+import pandas as pd
 from Common.CEnum import DATA_FIELD, KL_TYPE
 from Common.ChanException import CChanException, ErrCode
 from Common.CTime import CTime
@@ -10,8 +10,8 @@ from .CommonStockAPI import CCommonStockApi
 
 
 def create_item_dict(data, column_name):
-    for i in range(len(data)):
-        data[i] = parse_time_column(data[i]) if column_name[i] == DATA_FIELD.FIELD_TIME else str2float(data[i])
+    for i, name in enumerate(column_name):
+        data[i] = parse_time_column(data[name]) if name == DATA_FIELD.FIELD_TIME else str2float(data[name])
     return dict(zip(column_name, data))
 
 
@@ -61,18 +61,18 @@ class CSV_API(CCommonStockApi):
         file_path = f"{cur_path}/../{self.code}.csv"
         if not os.path.exists(file_path):
             raise CChanException(f"file not exist: {file_path}", ErrCode.SRC_DATA_NOT_FOUND)
+        df = pd.read_csv(file_path)
+        if not set(self.columns).issubset(set(df.columns)):
+            raise CChanException(f"file format error: {file_path} columns not enough", ErrCode.SRC_DATA_FORMAT_ERROR)
 
-        for line_number, line in enumerate(open(file_path, 'r')):
-            if self.headers_exist and line_number == 0:
-                continue
-            data = line.strip("\n").split(",")
-            if len(data) != len(self.columns):
+        for index, row in df.iterrows():
+            if len(row) < len(self.columns):
                 raise CChanException(f"file format error: {file_path}", ErrCode.SRC_DATA_FORMAT_ERROR)
-            if self.begin_date is not None and data[self.time_column_idx] < self.begin_date:
+            if self.begin_date is not None and row[DATA_FIELD.FIELD_TIME] < self.begin_date:
                 continue
-            if self.end_date is not None and data[self.time_column_idx] > self.end_date:
+            if self.end_date is not None and row[DATA_FIELD.FIELD_TIME] > self.end_date:
                 continue
-            yield CKLine_Unit(create_item_dict(data, self.columns))
+            yield CKLine_Unit(create_item_dict(row, self.columns))
 
     def SetBasciInfo(self):
         pass

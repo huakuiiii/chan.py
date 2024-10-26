@@ -61,15 +61,19 @@ class AbSctractPlotDriver(metaclass=ABCMeta):
             plot_para = {}
         figure_config: dict = plot_para.get('figure', {})
 
-        plot_config = parse_plot_config(plot_config, chan.lv_list)
-        plot_metas: List[CChanPlotMeta] = self.getPlotMeta(chan, figure_config)
-        self.lv_lst = chan.lv_list[:len(plot_metas)]
+        self.plot_para = plot_para
+        self.plot_config = parse_plot_config(plot_config, chan.lv_list)
+        self.plot_metas: List[CChanPlotMeta] = self.getPlotMeta(chan, figure_config)
+        self.lv_lst = chan.lv_list[:len(self.plot_metas)]
 
         # x_range = self.GetRealXrange(figure_config, plot_metas[0])
         plot_macd: Dict[KL_TYPE, bool] = {kl_type: conf.get(
-            "plot_macd", False) for kl_type, conf in plot_config.items()}
-        for meta, lv in zip(plot_metas, self.lv_lst):  # type: ignore
-            self.drawElement(plot_config[lv], meta, lv, plot_para, None, None)
+            "plot_macd", False) for kl_type, conf in self.plot_config.items()}
+
+    def draw(self):
+        for meta, lv in zip(self.plot_metas, self.lv_lst):
+            self.prepare_current_lv(meta)
+            self.drawElement(self.plot_config[lv], meta, lv, self.plot_para, None, None)
 
     def drawElement(self, plot_config: Dict[str, bool], meta: CChanPlotMeta, lv, plot_para, macd_data, x_limits):
         funcLst = dir(self)
@@ -83,6 +87,9 @@ class AbSctractPlotDriver(metaclass=ABCMeta):
             plot_metas = [plot_metas[0]]
         return plot_metas
 
+    @abstractmethod
+    def prepare_current_lv(self, meta: CChanPlotMeta):
+        pass
     @abstractmethod
     def plot_kline(self, meta: CChanPlotMeta):
         pass
