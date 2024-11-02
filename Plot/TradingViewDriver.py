@@ -152,9 +152,11 @@ class TradingViewDriver(AbSctractPlotDriver):
 
     def plot_marker(self, meta: CChanPlotMeta):
         marker_config_dict = self.plot_para.get('marker', {'markers': {}})
-        markers = marker_config_dict.get('markers')
+        markers = marker_config_dict.get('markers', [])
         default_color = marker_config_dict.get('default_color')
         new_marker = {}
+        if len(markers)<=0:
+            return
         for klu in meta.klu_iter():
             for date, marker in markers.items():
                 date_str = date.to_str() if isinstance(date, CTime) else date
