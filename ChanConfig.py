@@ -2,7 +2,7 @@ from typing import List
 
 from Bi.BiConfig import CBiConfig
 from BuySellPoint.BSPointConfig import CBSPointConfig
-from ChanModel.ChanModel import ChanProcessConfig
+from ChanModel import ChanProcessConfig
 from Common.CEnum import TREND_TYPE
 from Common.ChanException import CChanException, ErrCode
 from Common.func_util import _parse_inf
