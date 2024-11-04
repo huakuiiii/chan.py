@@ -128,7 +128,7 @@ class CChan:
         if not yielded:
             yield self
 
-    def trigger_load(self, inp):
+    def trigger_load(self, inp: Dict[KL_TYPE, List[CKLine_Unit]]):
         # {type: [klu, ...]}
         if not hasattr(self, 'klu_cache'):
             self.klu_cache: List[Optional[CKLine_Unit]] = [None for _ in self.lv_list]
