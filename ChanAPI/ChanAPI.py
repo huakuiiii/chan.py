@@ -1,4 +1,4 @@
-from typing import TypedDict, List, Dict
+from typing import TypedDict, List, Dict, Union
 
 import pandas as pd
 
@@ -41,11 +41,9 @@ def chan_static_data(params: StaticParams):
         data_src=params.get("data_src"),
     )
     # TODO: k线数据转换成DataFrame，其他保留
-    metas: Dict[KL_TYPE, ChanApiReturnType] = {}
+    metas: Dict[KL_TYPE, Dict[str, pd.DataFrame]] = {}
     for kl_type in chan.lv_list:
-        cdt: ChanApiReturnType = ChanApiReturnType(chan[kl_type])
-        klu_df = ChanDataProcessor(cdt).process()
-        cdt.klu_df = klu_df
+        cdt: Dict[str, pd.DataFrame] = chan[kl_type].to_dataframe_dict()
         metas[kl_type] = cdt
     return metas
 

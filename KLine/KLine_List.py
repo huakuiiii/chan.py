@@ -1,4 +1,5 @@
 import copy
+import pandas as pd
 from typing import List, Union, overload
 
 from Bi.Bi import CBi
@@ -87,10 +88,12 @@ class CKLine_List:
         return new_obj
 
     @overload
-    def __getitem__(self, index: int) -> CKLine: ...
+    def __getitem__(self, index: int) -> CKLine:
+        ...
 
     @overload
-    def __getitem__(self, index: slice) -> List[CKLine]: ...
+    def __getitem__(self, index: slice) -> List[CKLine]:
+        ...
 
     def __getitem__(self, index: Union[slice, int]) -> Union[List[CKLine], CKLine]:
         return self.lst[index]
@@ -128,12 +131,123 @@ class CKLine_List:
                     self.lst[-2].update_fx(self.lst[-3], self.lst[-1])
                 if self.bi_list.update_bi(self.lst[-2], self.lst[-1], self.step_calculation) and self.step_calculation:
                     self.cal_seg_and_zs()
-            elif self.step_calculation and self.bi_list.try_add_virtual_bi(self.lst[-1], need_del_end=True):  # 这里的必要性参见issue#175
+            elif self.step_calculation and self.bi_list.try_add_virtual_bi(self.lst[-1],
+                                                                           need_del_end=True):  # 这里的必要性参见issue#175
                 self.cal_seg_and_zs()
 
     def klu_iter(self, klc_begin_idx=0):
         for klc in self.lst[klc_begin_idx:]:
             yield from klc.lst
+
+    def to_dataframe_dict(self):
+        # Convert lst to DataFrame
+        dict = {}
+        dict['klu_df'] = pd.DataFrame([{
+            'time': klu.time,
+            'idx': klu.idx,
+            'high': klu.high,
+            'low': klu.low,
+            'open': klu.open,
+            'close': klu.close
+        } for klu in self.klu_iter(klc_begin_idx=0)])
+
+        dict['klc_df'] = pd.DataFrame([{
+            'begin_time': klc.time_begin,
+            'end_time': klc.time_end,
+            'idx': klc.idx,
+            # 'dir': klc.dir,
+            'high': klc.high,
+            'low': klc.low,
+            # 'fx': klc.fx,
+        } for klc in self.lst])
+
+        dict['bi_df'] = pd.DataFrame([{
+            'begin_time': bi.get_begin_klu().time,
+            'end_time': bi.get_end_klu().time,
+            'idx': bi.idx,
+            # 'dir': bi.dir,
+            'begin_y': bi.get_begin_val(),
+            'end_y': bi.get_end_val(),
+            # 'type': bi.type,
+            'is_sure': bi.is_sure,
+            'seg_idx': bi.seg_idx,
+            'parent_seg': bi.parent_seg.idx if bi.parent_seg else None,
+            'begin_klc': bi.begin_klc.idx,
+            'end_klc': bi.end_klc.idx,
+            'begin_val': bi.get_begin_val(),
+            'end_val': bi.get_end_val(),
+            'klu_cnt': bi.get_klu_cnt(),
+            'klc_cnt': bi.get_klc_cnt(),
+        } for bi in self.bi_list])
+
+        dict['seg_df'] = pd.DataFrame([{
+            'begin_time': seg.get_begin_klu().time,
+            'end_time': seg.get_end_klu().time,
+            'idx': seg.idx,
+            # 'dir': seg.dir,
+            'begin_y': seg.get_begin_val(),
+            'end_y': seg.get_end_val(),
+            'is_sure': seg.is_sure,
+            'seg_idx': seg.seg_idx,
+            'parent_seg': seg.parent_seg.idx if seg.parent_seg else None,
+            'klu_cnt': seg.get_klu_cnt(),
+        } for seg in self.seg_list])
+
+        dict['zs_df'] = pd.DataFrame([{
+            'begin_time': zs.get_begin_klu.time,
+            'end_time': zs.get_end_klu.time,
+            'begin_idx': zs.begin.idx,
+            'end_idx': zs.end.idx,
+            'w': zs.end - zs.begin,
+            'h': zs.high - zs.low,
+            'dir': zs.bi_out.dir,
+            'high': zs.peak_high,
+            'low': zs.peak_low,
+            'is_sure': zs.is_sure,
+            'is_onebi_zs': zs.is_one_bi_zs()
+        } for zs in self.zs_list])
+
+        dict['seg_seg_df'] = pd.DataFrame([{
+            'begin_time': seg_seg.get_begin_klu().time,
+            'end_time': seg_seg.get_end_klu().time,
+            'idx': seg_seg.idx,
+            # 'dir': seg_seg.dir,
+            'begin_y': seg_seg.get_begin_val(),
+            'end_y': seg_seg.get_end_val(),
+            'type': seg_seg.type,
+            'is_sure': seg_seg.is_sure,
+            'seg_idx': seg_seg.seg_idx,
+            'parent_seg': seg_seg.parent_seg.idx if seg_seg.parent_seg else None,
+            'begin_klc': seg_seg.begin_klc.idx,
+            'end_klc': seg_seg.end_klc.idx,
+            'begin_val': seg_seg.get_begin_val(),
+            'end_val': seg_seg.get_end_val(),
+            'klu_cnt': seg_seg.get_klu_cnt(),
+            'klc_cnt': seg_seg.get_klc_cnt(),
+        } for seg_seg in self.segseg_list])
+
+        dict['seg_zs_df'] = pd.DataFrame([{
+            'begin_time': seg_zs.get_begin_klu.time,
+            'end_time': seg_zs.get_end_klu.time,
+            'begin_idx': seg_zs.begin.idx,
+            'end_idx': seg_zs.end.idx,
+            'dir': seg_zs.bi_out.dir,
+            'peak_high': seg_zs.peak_high,
+            'peak_low': seg_zs.peak_low,
+            'is_sure': seg_zs.is_sure
+        } for seg_zs in self.segzs_list])
+
+        dict['bsp_df'] = pd.DataFrame([{
+            'time': bsp.klu.time,
+            'idx': bsp.klu.idx,
+            # 'type': bsp.type,
+            'desc': bsp.type2str(),
+            'is_buy': bsp.is_buy,
+            'is_segbsp': bsp.is_segbsp,
+            'y': bsp.klu.low if bsp.is_buy else bsp.klu.high
+        } for bsp in self.bs_point_lst])
+
+        return dict
 
 
 def cal_seg(bi_list, seg_list: CSegListComm):
@@ -159,7 +273,7 @@ def cal_seg(bi_list, seg_list: CSegListComm):
         if bi.seg_idx is not None and bi.idx < begin_seg.start_bi.idx:
             break
         if bi.idx > cur_seg.end_bi.idx:
-            bi.set_seg_idx(cur_seg.idx+1)
+            bi.set_seg_idx(cur_seg.idx + 1)
             continue
         if bi.idx < cur_seg.start_bi.idx:
             assert cur_seg.pre
@@ -181,10 +295,10 @@ def update_zs_in_seg(bi_list, seg_list, zs_list):
             if zs.is_inside(seg):
                 seg.add_zs(zs)
             assert zs.begin_bi.idx > 0
-            zs.set_bi_in(bi_list[zs.begin_bi.idx-1])
-            if zs.end_bi.idx+1 < len(bi_list):
-                zs.set_bi_out(bi_list[zs.end_bi.idx+1])
-            zs.set_bi_lst(list(bi_list[zs.begin_bi.idx:zs.end_bi.idx+1]))
+            zs.set_bi_in(bi_list[zs.begin_bi.idx - 1])
+            if zs.end_bi.idx + 1 < len(bi_list):
+                zs.set_bi_out(bi_list[zs.end_bi.idx + 1])
+            zs.set_bi_lst(list(bi_list[zs.begin_bi.idx:zs.end_bi.idx + 1]))
 
         if sure_seg_cnt > 2:
             if not seg.ele_inside_is_sure:
