@@ -1,12 +1,13 @@
 from typing import TypedDict, List, Dict
 
-from typing_extensions import ParamSpecArgs
+import pandas as pd
 
 from Chan import CChan
+from ChanConfig import CChanConfig
 from ChanModel import ChanProcessConfig
 from Common.CEnum import DATA_SRC, KL_TYPE
-from KLine.KLine_List import CKLine_List
 from Plot.PlotMeta import CChanPlotMeta
+from Utils.ChanDataProcessor import ChanDataProcessor
 
 
 class RealTimeParams(TypedDict, total=False):
@@ -18,24 +19,34 @@ class RealTimeParams(TypedDict, total=False):
 class StaticParams(TypedDict, total=False):
     code: str
     begin_time: str
-    end_time: str
+    end_time: str | None
     data_src: DATA_SRC
     lv_list: List[KL_TYPE]
     config: ChanProcessConfig
 
 
+class ChanApiReturnType(CChanPlotMeta):
+    klu_df: pd.DataFrame
+
+
 # return: Dict[KL_TYPE, DataFrame]
 def chan_static_data(params: StaticParams):
+    config = CChanConfig(params.get("config"))
     chan = CChan(
         code=params.get("code"),
         lv_list=params.get("lv_list"),
-        config=params.get("config"),
+        config=config,
         begin_time=params.get("begin_time"),
         end_time=params.get("end_time"),
         data_src=params.get("data_src"),
     )
-    # TODO: 转换成DataFrame
-    metas: Dict[KL_TYPE, CChanPlotMeta] = {kl_type: CChanPlotMeta(chan[kl_type]) for kl_type in chan.lv_list}
+    # TODO: k线数据转换成DataFrame，其他保留
+    metas: Dict[KL_TYPE, ChanApiReturnType] = {}
+    for kl_type in chan.lv_list:
+        cdt: ChanApiReturnType = ChanApiReturnType(chan[kl_type])
+        klu_df = ChanDataProcessor(cdt).process()
+        cdt.klu_df = klu_df
+        metas[kl_type] = cdt
     return metas
 
 
