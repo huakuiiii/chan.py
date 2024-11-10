@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from prompt_toolkit.utils import to_str
+
 
 class CTime:
     def __init__(self, year, month, day, hour, minute, second=0, auto=True):
@@ -19,10 +21,13 @@ class CTime:
             return f"{self.year:04}/{self.month:02}/{self.day:02} {self.hour:02}:{self.minute:02}"
 
     def to_str(self):
+        return to_str('/')
+
+    def to_str_splt(self, splt='/'):
         if self.hour == 0 and self.minute == 0:
-            return f"{self.year:04}/{self.month:02}/{self.day:02}"
+            return f"{self.year:04}{splt}{self.month:02}{splt}{self.day:02}"
         else:
-            return f"{self.year:04}/{self.month:02}/{self.day:02} {self.hour:02}:{self.minute:02}"
+            return f"{self.year:04}{splt}{self.month:02}{splt}{self.day:02} {self.hour:02}:{self.minute:02}"
 
     def toDateStr(self, splt=''):
         return f"{self.year:04}{splt}{self.month:02}{splt}{self.day:02}"
