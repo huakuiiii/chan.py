@@ -21,7 +21,7 @@ class CTime:
             return f"{self.year:04}/{self.month:02}/{self.day:02} {self.hour:02}:{self.minute:02}"
 
     def to_str(self):
-        return to_str('/')
+        return self.to_str_splt('/')
 
     def to_str_splt(self, splt='/'):
         if self.hour == 0 and self.minute == 0:
