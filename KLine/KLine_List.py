@@ -142,8 +142,8 @@ class CKLine_List:
     def to_dataframe_dict(self):
         # Convert lst to DataFrame
         dict = {}
-        dict['klu_df'] = pd.DataFrame([{
-            'time': klu.time,
+        dict['klu'] = pd.DataFrame([{
+            'time': klu.time.to_str(),
             'idx': klu.idx,
             'high': klu.high,
             'low': klu.low,
@@ -151,9 +151,9 @@ class CKLine_List:
             'close': klu.close
         } for klu in self.klu_iter(klc_begin_idx=0)])
 
-        dict['klc_df'] = pd.DataFrame([{
-            'begin_time': klc.time_begin,
-            'end_time': klc.time_end,
+        dict['klc'] = pd.DataFrame([{
+            'begin_time': klc.time_begin.to_str(),
+            'end_time': klc.time_end.to_str(),
             'idx': klc.idx,
             'dir': klc.dir.value,
             'high': klc.high,
@@ -161,41 +161,38 @@ class CKLine_List:
             # 'fx': klc.fx,
         } for klc in self.lst])
 
-        dict['bi_df'] = pd.DataFrame([{
-            'begin_time': bi.get_begin_klu().time,
-            'end_time': bi.get_end_klu().time,
-            'idx': bi.idx,
+        dict['bi'] = pd.DataFrame([{
+            'begin_time': bi.get_begin_klu().time.to_str(),
+            'end_time': bi.get_end_klu().time.to_str(),
             'dir': bi.dir.value,
-            'begin_y': bi.get_begin_val(),
-            'end_y': bi.get_end_val(),
-            # 'type': bi.type,
-            'is_sure': bi.is_sure,
-            'seg_idx': bi.seg_idx,
-            'parent_seg': bi.parent_seg.idx if bi.parent_seg else None,
-            'begin_klc': bi.begin_klc.idx,
-            'end_klc': bi.end_klc.idx,
             'begin_val': bi.get_begin_val(),
             'end_val': bi.get_end_val(),
+            'bi_idx': bi.idx,
+            # 'type': bi.type,
+            'is_sure': bi.is_sure,
+            # 'seg_idx': bi.seg_idx,
+            # 'parent_seg': bi.parent_seg.idx if bi.parent_seg else None,
+            # 'begin_klc': bi.begin_klc.idx,
+            # 'end_klc': bi.end_klc.idx,
             'klu_cnt': bi.get_klu_cnt(),
             'klc_cnt': bi.get_klc_cnt(),
         } for bi in self.bi_list])
 
-        dict['seg_df'] = pd.DataFrame([{
-            'begin_time': seg.get_begin_klu().time,
-            'end_time': seg.get_end_klu().time,
-            'idx': seg.idx,
+        dict['seg'] = pd.DataFrame([{
+            'begin_time': seg.get_begin_klu().time.to_str(),
+            'end_time': seg.get_end_klu().time.to_str(),
+            'begin_val': seg.get_begin_val(),
+            'end_val': seg.get_end_val(),
             'dir': seg.dir.value,
-            'begin_y': seg.get_begin_val(),
-            'end_y': seg.get_end_val(),
             'is_sure': seg.is_sure,
-            'seg_idx': seg.seg_idx,
-            'parent_seg': seg.parent_seg.idx if seg.parent_seg else None,
-            'klu_cnt': seg.get_klu_cnt(),
+            # 'idx': seg.idx,
+            # 'parent_seg': seg.parent_seg.idx if seg.parent_seg else None,
+            # 'klu_cnt': seg.get_klu_cnt(),
         } for seg in self.seg_list])
 
-        dict['zs_df'] = pd.DataFrame([{
-            'begin_time': zs.get_begin_klu.time,
-            'end_time': zs.get_end_klu.time,
+        dict['zs'] = pd.DataFrame([{
+            'begin_time': zs.get_begin_klu.time.to_str(),
+            'end_time': zs.get_end_klu.time.to_str(),
             'begin_idx': zs.begin.idx,
             'end_idx': zs.end.idx,
             'w': zs.end - zs.begin,
@@ -207,44 +204,42 @@ class CKLine_List:
             'is_onebi_zs': zs.is_one_bi_zs()
         } for zs in self.zs_list])
 
-        dict['seg_seg_df'] = pd.DataFrame([{
-            'begin_time': seg_seg.get_begin_klu().time,
-            'end_time': seg_seg.get_end_klu().time,
-            'idx': seg_seg.idx,
+        dict['seg_seg'] = pd.DataFrame([{
+            'begin_time': seg_seg.get_begin_klu().time.to_str(),
+            'end_time': seg_seg.get_end_klu().time.to_str(),
             'dir': seg_seg.dir.value,
-            'begin_y': seg_seg.get_begin_val(),
-            'end_y': seg_seg.get_end_val(),
-            'type': seg_seg.type,
-            'is_sure': seg_seg.is_sure,
-            'seg_idx': seg_seg.seg_idx,
-            'parent_seg': seg_seg.parent_seg.idx if seg_seg.parent_seg else None,
-            'begin_klc': seg_seg.begin_klc.idx,
-            'end_klc': seg_seg.end_klc.idx,
             'begin_val': seg_seg.get_begin_val(),
             'end_val': seg_seg.get_end_val(),
-            'klu_cnt': seg_seg.get_klu_cnt(),
-            'klc_cnt': seg_seg.get_klc_cnt(),
+            'type': seg_seg.type,
+            'is_sure': seg_seg.is_sure,
+            # 'seg_idx': seg_seg.seg_idx,
+            # 'idx': seg_seg.idx,
+            # 'parent_seg': seg_seg.parent_seg.idx if seg_seg.parent_seg else None,
+            # 'begin_klc': seg_seg.begin_klc.idx,
+            # 'end_klc': seg_seg.end_klc.idx,
+            # 'klu_cnt': seg_seg.get_klu_cnt(),
+            # 'klc_cnt': seg_seg.get_klc_cnt(),
         } for seg_seg in self.segseg_list])
 
-        dict['seg_zs_df'] = pd.DataFrame([{
-            'begin_time': seg_zs.get_begin_klu.time,
-            'end_time': seg_zs.get_end_klu.time,
+        dict['seg_zs'] = pd.DataFrame([{
+            'begin_time': seg_zs.get_begin_klu.time.to_str(),
+            'end_time': seg_zs.get_end_klu.time.to_str(),
             'begin_idx': seg_zs.begin.idx,
             'end_idx': seg_zs.end.idx,
             'dir': seg_zs.bi_out.dir.value,
-            'peak_high': seg_zs.peak_high,
-            'peak_low': seg_zs.peak_low,
+            'high': seg_zs.peak_high,
+            'low': seg_zs.peak_low,
             'is_sure': seg_zs.is_sure
         } for seg_zs in self.segzs_list])
 
-        dict['bsp_df'] = pd.DataFrame([{
-            'time': bsp.klu.time,
+        dict['bsp'] = pd.DataFrame([{
+            'time': bsp.klu.time.to_str(),
             'idx': bsp.klu.idx,
-            # 'type': bsp.type,
             'desc': bsp.type2str(),
             'is_buy': bsp.is_buy,
-            'is_segbsp': bsp.is_segbsp,
+            'is_seg_bsp': bsp.is_segbsp,
             'y': bsp.klu.low if bsp.is_buy else bsp.klu.high
+            # 'type': bsp.type,
         } for bsp in self.bs_point_lst])
 
         return dict
