@@ -143,6 +143,7 @@ class CKLine_List:
         # Convert lst to DataFrame
         dict = {}
         dict['klu'] = pd.DataFrame([{
+            'timestamp': klu.time.ts,
             'time': klu.time.to_str(),
             'idx': klu.idx,
             'high': klu.high,
