@@ -143,8 +143,8 @@ class CKLine_List:
         # Convert lst to DataFrame
         dict = {}
         dict['klu'] = pd.DataFrame([{
-            'timestamp': klu.time.ts,
-            'time': klu.time.to_str(),
+            'timestamp': klu.time.ts_ms,
+            'time': klu.time.to_str_splt('-'),
             'idx': klu.idx,
             'high': klu.high,
             'low': klu.low,
@@ -153,8 +153,8 @@ class CKLine_List:
         } for klu in self.klu_iter(klc_begin_idx=0)])
 
         dict['klc'] = pd.DataFrame([{
-            'begin_time': klc.time_begin.to_str(),
-            'end_time': klc.time_end.to_str(),
+            'begin_time': klc.time_begin.to_str_splt('-'),
+            'end_time': klc.time_end.to_str_splt('-'),
             'idx': klc.idx,
             'dir': klc.dir.value,
             'high': klc.high,
@@ -163,8 +163,8 @@ class CKLine_List:
         } for klc in self.lst])
 
         dict['bi'] = pd.DataFrame([{
-            'begin_time': bi.get_begin_klu().time.to_str(),
-            'end_time': bi.get_end_klu().time.to_str(),
+            'begin_time': bi.get_begin_klu().time.to_str_splt('-'),
+            'end_time': bi.get_end_klu().time.to_str_splt('-'),
             'dir': bi.dir.value,
             'begin_val': bi.get_begin_val(),
             'end_val': bi.get_end_val(),
@@ -180,8 +180,8 @@ class CKLine_List:
         } for bi in self.bi_list])
 
         dict['seg'] = pd.DataFrame([{
-            'begin_time': seg.get_begin_klu().time.to_str(),
-            'end_time': seg.get_end_klu().time.to_str(),
+            'begin_time': seg.get_begin_klu().time.to_str_splt('-'),
+            'end_time': seg.get_end_klu().time.to_str_splt('-'),
             'begin_val': seg.get_begin_val(),
             'end_val': seg.get_end_val(),
             'dir': seg.dir.value,
@@ -192,11 +192,11 @@ class CKLine_List:
         } for seg in self.seg_list])
 
         dict['zs'] = pd.DataFrame([{
-            'begin_time': zs.get_begin_klu.time.to_str(),
-            'end_time': zs.get_end_klu.time.to_str(),
+            'begin_time': zs.begin.time.to_str_splt('-'),
+            'end_time': zs.end.time.to_str_splt('-'),
             'begin_idx': zs.begin.idx,
             'end_idx': zs.end.idx,
-            'w': zs.end - zs.begin,
+            'w': zs.end.idx - zs.begin.idx,
             'h': zs.high - zs.low,
             'dir': zs.bi_out.dir.value,
             'high': zs.peak_high,
@@ -206,12 +206,11 @@ class CKLine_List:
         } for zs in self.zs_list])
 
         dict['seg_seg'] = pd.DataFrame([{
-            'begin_time': seg_seg.get_begin_klu().time.to_str(),
-            'end_time': seg_seg.get_end_klu().time.to_str(),
+            'begin_time': seg_seg.get_begin_klu().time.to_str_splt('-'),
+            'end_time': seg_seg.get_end_klu().time.to_str_splt('-'),
             'dir': seg_seg.dir.value,
             'begin_val': seg_seg.get_begin_val(),
             'end_val': seg_seg.get_end_val(),
-            'type': seg_seg.type,
             'is_sure': seg_seg.is_sure,
             # 'seg_idx': seg_seg.seg_idx,
             # 'idx': seg_seg.idx,
@@ -223,8 +222,8 @@ class CKLine_List:
         } for seg_seg in self.segseg_list])
 
         dict['seg_zs'] = pd.DataFrame([{
-            'begin_time': seg_zs.get_begin_klu.time.to_str(),
-            'end_time': seg_zs.get_end_klu.time.to_str(),
+            'begin_time': seg_zs.begin.time.to_str_splt('-'),
+            'end_time': seg_zs.end.time.to_str_splt('-'),
             'begin_idx': seg_zs.begin.idx,
             'end_idx': seg_zs.end.idx,
             'dir': seg_zs.bi_out.dir.value,
@@ -234,7 +233,7 @@ class CKLine_List:
         } for seg_zs in self.segzs_list])
 
         dict['bsp'] = pd.DataFrame([{
-            'time': bsp.klu.time.to_str(),
+            'time': bsp.klu.time.to_str_splt('-'),
             'idx': bsp.klu.idx,
             'desc': bsp.type2str(),
             'is_buy': bsp.is_buy,

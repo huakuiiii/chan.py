@@ -17,7 +17,12 @@ def create_item_dict(data, column_name):
 def parse_time_column(inp):
     # 20210902113000000
     # 2021-09-13
-    if len(inp) == 10:
+    if len(inp) == 8:
+        year = int(inp[:4])
+        month = int(inp[4:6])
+        day = int(inp[6:8])
+        hour = minute = 0
+    elif len(inp) == 10:
         year = int(inp[:4])
         month = int(inp[5:7])
         day = int(inp[8:10])

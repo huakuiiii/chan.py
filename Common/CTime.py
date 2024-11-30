@@ -37,10 +37,18 @@ class CTime:
 
     def set_timestamp(self):
         if self.hour == 0 and self.minute == 0 and self.auto:
-            date = datetime(self.year, self.month, self.day, 23, 59, self.second)
+            date = datetime(self.year, self.month,
+                            self.day, 23, 59, self.second)
         else:
-            date = datetime(self.year, self.month, self.day, self.hour, self.minute, self.second)
+            date = datetime(self.year, self.month, self.day,
+                            self.hour, self.minute, self.second)
         self.ts = date.timestamp()
+
+        # 获取毫秒部分
+        milliseconds = int((self.ts % 1) * 1000)
+        # 输出包含毫秒的时间戳
+        timestamp_milliseconds = int(self.ts) * 1000 + milliseconds
+        self.ts_ms = timestamp_milliseconds
 
     def __gt__(self, t2):
         return self.ts > t2.ts

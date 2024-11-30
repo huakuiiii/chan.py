@@ -7,7 +7,6 @@ from ChanConfig import CChanConfig
 from ChanModel import ChanProcessConfig
 from Common.CEnum import DATA_SRC, KL_TYPE
 from Plot.PlotMeta import CChanPlotMeta
-from Utils.ChanDataProcessor import ChanDataProcessor
 
 
 class RealTimeParams(TypedDict, total=False):
@@ -47,13 +46,3 @@ def chan_static_data(params: StaticParams):
         metas[kl_type] = cdt
     return metas
 
-
-def chan_real_time_update(params: RealTimeParams):
-    chan = CChan(
-        code=params.get("code"),
-        lv_list=params.get("lv_list"),
-        config=params.get("config")
-    )
-    # TODO: 转换成DataFrame
-    chan.trigger_load()
-    return chan.kl_datas
