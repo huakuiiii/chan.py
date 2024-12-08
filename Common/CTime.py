@@ -4,7 +4,7 @@ from prompt_toolkit.utils import to_str
 
 
 class CTime:
-    def __init__(self, year, month, day, hour, minute, second=0, auto=True):
+    def __init__(self, year, month, day, hour, minute, second=0, auto=False):
         self.year = year
         self.month = month
         self.day = day

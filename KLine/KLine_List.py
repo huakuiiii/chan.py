@@ -165,6 +165,8 @@ class CKLine_List:
         dict['bi'] = pd.DataFrame([{
             'begin_time': bi.get_begin_klu().time.to_str_splt('-'),
             'end_time': bi.get_end_klu().time.to_str_splt('-'),
+            'begin_idx': bi.get_begin_klu().idx,
+            'end_idx': bi.get_end_klu().idx,
             'dir': bi.dir.value,
             'begin_val': bi.get_begin_val(),
             'end_val': bi.get_end_val(),
@@ -182,6 +184,8 @@ class CKLine_List:
         dict['seg'] = pd.DataFrame([{
             'begin_time': seg.get_begin_klu().time.to_str_splt('-'),
             'end_time': seg.get_end_klu().time.to_str_splt('-'),
+            'begin_idx': seg.get_begin_klu().idx,
+            'end_idx': seg.get_end_klu().idx,
             'begin_val': seg.get_begin_val(),
             'end_val': seg.get_end_val(),
             'dir': seg.dir.value,
@@ -209,6 +213,8 @@ class CKLine_List:
             'begin_time': seg_seg.get_begin_klu().time.to_str_splt('-'),
             'end_time': seg_seg.get_end_klu().time.to_str_splt('-'),
             'dir': seg_seg.dir.value,
+            'begin_idx': seg_seg.get_begin_klu().idx,
+            'end_idx': seg_seg.get_end_klu().idx,
             'begin_val': seg_seg.get_begin_val(),
             'end_val': seg_seg.get_end_val(),
             'is_sure': seg_seg.is_sure,
