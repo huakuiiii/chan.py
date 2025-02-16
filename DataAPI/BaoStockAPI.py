@@ -65,7 +65,7 @@ class CBaoStock(CCommonStockApi):
         while rs.error_code == '0' and rs.next():
             yield CKLine_Unit(create_item_dict(rs.get_row_data(), GetColumnNameFromFieldList(fields)))
 
-    def SetBasciInfo(self):
+    def set_basic_info(self):
         rs = bs.query_stock_basic(code=self.code)
         if rs.error_code != '0':
             raise Exception(rs.error_msg)

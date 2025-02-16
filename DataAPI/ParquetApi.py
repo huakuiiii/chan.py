@@ -67,7 +67,7 @@ class ParquetApi(CCommonStockApi):
                 continue
             yield CKLine_Unit(create_item_dict(row, self.columns))
 
-    def SetBasciInfo(self):
+    def set_basic_info(self):
         pass
 
     @classmethod
