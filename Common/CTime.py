@@ -14,6 +14,9 @@ class CTime:
         self.auto = auto  # 自适应对天的理解
         self.set_timestamp()  # set self.ts
 
+    @classmethod
+    def from_datetime(cls, dt: datetime, auto=False):
+        return cls(dt.year, dt.month, dt.day, dt.hour, dt.minute, second=dt.second, auto=auto)
     def __str__(self):
         if self.hour == 0 and self.minute == 0:
             return f"{self.year:04}/{self.month:02}/{self.day:02}"

@@ -1,4 +1,7 @@
 import os
+from datetime import datetime
+from typing import Iterable
+
 import pandas as pd
 from Common.CEnum import DATA_FIELD, KL_TYPE
 from Common.ChanException import CChanException, ErrCode
@@ -18,26 +21,8 @@ def create_item_dict(data, column_name):
 def parse_time_column(inp):
     # 20210902113000000
     # 2021-09-13
-    if len(inp) == 10:
-        year = int(inp[:4])
-        month = int(inp[5:7])
-        day = int(inp[8:10])
-        hour = minute = 0
-    elif len(inp) == 17:
-        year = int(inp[:4])
-        month = int(inp[4:6])
-        day = int(inp[6:8])
-        hour = int(inp[8:10])
-        minute = int(inp[10:12])
-    elif len(inp) == 19:
-        year = int(inp[:4])
-        month = int(inp[5:7])
-        day = int(inp[8:10])
-        hour = int(inp[11:13])
-        minute = int(inp[14:16])
-    else:
-        raise Exception(f"unknown time column from csv:{inp}")
-    return CTime(year, month, day, hour, minute)
+    dt = pd.to_datetime(inp)
+    return CTime.from_datetime(dt)
 
 
 class CSV_API(CCommonStockApi):
@@ -56,7 +41,7 @@ class CSV_API(CCommonStockApi):
         self.time_column_idx = self.columns.index(DATA_FIELD.FIELD_TIME)
         super(CSV_API, self).__init__(code, k_type, begin_date, end_date, autype)
 
-    def get_kl_data(self):
+    def get_kl_data(self) -> Iterable[CKLine_Unit]:
         cur_path = os.path.dirname(os.path.realpath(__file__))
         k_type = self.k_type.name[2:].lower()
         file_path = f"{cur_path}/../{self.code}_{k_type}.csv"
